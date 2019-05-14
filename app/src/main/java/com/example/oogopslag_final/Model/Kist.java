@@ -2,13 +2,14 @@ package com.example.oogopslag_final.Model;
 
 public class Kist {
     private String ras, maat, kwaliteit, cel, datum;
-    public Kist(){};
+    public Kist(){}
     public Kist(String Ras, String Maat, String Kwaliteit, String Cel, String Datum){
         ras = Ras;
         maat = Maat;
         kwaliteit = Kwaliteit;
         cel = Cel;
-        datum = Datum;
+
+        //lala
 
     }
 
