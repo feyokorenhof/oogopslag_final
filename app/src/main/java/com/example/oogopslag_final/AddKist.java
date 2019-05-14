@@ -20,6 +20,7 @@ import java.util.Date;
 
 
 import com.example.oogopslag_final.Model.Kist;
+import com.example.oogopslag_final.Model.Ras;
 import com.example.oogopslag_final.Model.User;
 
 import java.lang.reflect.Array;
@@ -86,8 +87,8 @@ public class AddKist extends AppCompatActivity {
         spinner_selectcell = findViewById(R.id.spinner_selectcell);
 
 
-        list_ras.add("Agria");
-        list_ras.add("Bintje");
+//        list_ras.add("Agria");
+//        list_ras.add("Bintje");
         list_maat.add("1");
         list_maat.add("2");
         list_kwaliteit.add("Perfect");
@@ -121,6 +122,24 @@ public class AddKist extends AppCompatActivity {
                 }
 
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        final DatabaseReference table_rassen = database.getReference("Rassen");
+        table_rassen.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    Ras ras = ds.getValue(Ras.class);
+                    list_ras.add(ras.getRas());
+                    initAdapters();
+
+                }
             }
 
             @Override
