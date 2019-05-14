@@ -78,7 +78,7 @@ public class AddKist extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addkist);
 
-        kisten.clear();
+
 
         // Create spinners.
         spinner_ras = findViewById(R.id.spinner_ras);
@@ -148,11 +148,26 @@ public class AddKist extends AppCompatActivity {
             }
         });
 
+        final DatabaseReference table_numkist = table_cells.child("Cell1");
+        table_numkist.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                kisten.clear();
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    Kist kist = ds.getValue(Kist.class);
+                    kisten.add(kist);
+                    //System.out.println(kist);
 
+                }
+                numKist = kisten.size();
 
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-
+            }
+        });
 
 
         // Initialize button.
@@ -160,12 +175,7 @@ public class AddKist extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
                 addKist();
-
-
             }
 
         });
@@ -264,25 +274,7 @@ public class AddKist extends AppCompatActivity {
             //kisten.clear();
 
 
-            final DatabaseReference table_numkist = table_cells.child("Cell1");
-            table_numkist.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot ds : dataSnapshot.getChildren()){
-                        Kist kist = ds.getValue(Kist.class);
-                        kisten.add(kist);
-                        //System.out.println(kist);
 
-                    }
-                    numKist = kisten.size();
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
 
 
             // Set numKist to 0 before counting
@@ -318,7 +310,7 @@ public class AddKist extends AppCompatActivity {
             //final FirebaseDatabase database = FirebaseDatabase.getInstance();
             final DatabaseReference table_usercell = database.getReference();
             String cellref = "Cell" + selectedCell;
-            System.out.print(kist);
+            //System.out.print(kist);
 
 
             //System.out.println(cellref);
