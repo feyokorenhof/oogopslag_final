@@ -78,7 +78,7 @@ public class AddKist extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addkist);
 
-
+        //list_ras.clear();
 
         // Create spinners.
         spinner_ras = findViewById(R.id.spinner_ras);
@@ -121,6 +121,8 @@ public class AddKist extends AppCompatActivity {
 
                 }
 
+                //initAdapters();
+
 
             }
 
@@ -134,12 +136,22 @@ public class AddKist extends AppCompatActivity {
         table_rassen.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                list_ras.clear();
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    Ras ras = ds.getValue(Ras.class);
-                    list_ras.add(ras.getRas());
-                    initAdapters();
+                    if(ds.getValue() != null){
+                        Ras ras = ds.getValue(Ras.class);
+                        if(ras != null){
+                            list_ras.add(ras.getRas());
+                        }
+
+
+                    }
+
+
 
                 }
+
+                initAdapters();
             }
 
             @Override
@@ -148,7 +160,8 @@ public class AddKist extends AppCompatActivity {
             }
         });
 
-        final DatabaseReference table_numkist = table_cells.child("Cell1");
+        System.out.println(selectedCell);
+        final DatabaseReference table_numkist = table_cells.child("Cell" + selectedCell);
         table_numkist.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -156,10 +169,11 @@ public class AddKist extends AppCompatActivity {
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     Kist kist = ds.getValue(Kist.class);
                     kisten.add(kist);
-                    //System.out.println(kist);
+                    System.out.println(kisten);
 
                 }
                 numKist = kisten.size();
+                initAdapters();
 
             }
 
@@ -186,8 +200,6 @@ public class AddKist extends AppCompatActivity {
     }
 
     public void initAdapters() {
-
-
 
         // ArrayAdapter for spinner list_ras.
         ArrayAdapter<String> adapter_ras = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_ras);
@@ -271,7 +283,7 @@ public class AddKist extends AppCompatActivity {
     }
 
         public void addKist () {
-            //kisten.clear();
+        //kisten.clear();
 
 
 
@@ -279,7 +291,7 @@ public class AddKist extends AppCompatActivity {
 
             // Set numKist to 0 before counting
 
-            System.out.println(kisten.size());
+            //System.out.println(kisten.size());
 
             // Get current date.
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -309,19 +321,13 @@ public class AddKist extends AppCompatActivity {
             Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
             //final FirebaseDatabase database = FirebaseDatabase.getInstance();
             final DatabaseReference table_usercell = database.getReference();
-            String cellref = "Cell" + selectedCell;
-            //System.out.print(kist);
 
-
-            //System.out.println(cellref);
-
-
-
-            //System.out.println(numKist);
-            //numKist = kisten.size();
             String kistName = "Kist" + (numKist + 1);
+            String cellRef = "Cell" + selectedCell;
+            //System.out.println(selectedCell);
 
-            table_usercell.child("Cells").child("Cell1").child(kistName).setValue(kist);
+
+            table_usercell.child("Cells").child(cellRef).child(kistName).setValue(kist);
 
 
 //            Intent i = new Intent(this, Cells.class);
