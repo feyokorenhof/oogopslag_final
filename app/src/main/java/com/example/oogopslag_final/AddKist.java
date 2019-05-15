@@ -38,7 +38,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class AddKist extends AppCompatActivity {
 
+    //Get an instance of the Firebase database
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    //Get a reference to the 'Cells' tree, from the database
     final DatabaseReference table_cells = database.getReference("Cells");
 
     Spinner spinner_ras;
@@ -48,6 +50,7 @@ public class AddKist extends AppCompatActivity {
     private Button button;
 
     EditText editDate;
+    EditText editAmount;
 
     String selectedRas;
     String selectedMaat;
@@ -60,9 +63,6 @@ public class AddKist extends AppCompatActivity {
     long currentCount;
 
     String currentCel;
-    String lastKist;
-
-    List<String> list_lastkist = new ArrayList<>();
 
 
 // Add spinner content.
@@ -76,9 +76,18 @@ public class AddKist extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Assign the proper layout to AddKist.java
         setContentView(R.layout.activity_addkist);
+        // Initialize button.
+        button = findViewById(R.id.btnAddKist);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        //list_ras.clear();
+                addKist();
+            }
+
+        });
 
         // Create spinners.
         spinner_ras = findViewById(R.id.spinner_ras);
@@ -87,21 +96,95 @@ public class AddKist extends AppCompatActivity {
         spinner_selectcell = findViewById(R.id.spinner_selectcell);
 
 
-//        list_ras.add("Agria");
-//        list_ras.add("Bintje");
+        //Add list content
+        //list_ras.add("Agria");
         list_maat.add("1");
         list_maat.add("2");
         list_kwaliteit.add("Perfect");
         list_kwaliteit.add("Goed");
         list_kwaliteit.add("Matig");
         list_kwaliteit.add("Slecht");
+        //Call the setup function
+        Setup();
 
 
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference table_cells = database.getReference("Cells");
+
+    }
 
 
+
+    public void addKist () {
+        //kisten.clear();
+        //System.out.println(selectedCell);
+        Setup();
+
+
+
+        // Set numKist to 0 before counting
+
+        //System.out.println(kisten.size());
+
+        // Get current date.
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+
+        Toast.makeText(this, selectedRas + selectedMaat + selectedKwaliteit + selectedCell, Toast.LENGTH_SHORT).show();
+        final String value = selectedRas + "," + selectedMaat + ","
+                + selectedKwaliteit + "," + selectedCell;
+
+
+        String ref = "Cell" + selectedCell;
+        currentCel = ref;
+        editDate = findViewById(R.id.editDate);
+        String userDate = editDate.getText().toString();
+
+        if(userDate.equals("")){
+            useDate = date.toString();
+
+
+        }
+        else{
+            useDate = userDate;
+
+        }
+
+
+        Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
+        //final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference table_usercell = database.getReference();
+
+        String kistName = "Kist" + (numKist + 1);
+        String cellRef = "Cell" + selectedCell;
+        //System.out.println(selectedCell);
+
+
+        table_usercell.child("Cells").child(cellRef).child(kistName).setValue(kist);
+
+
+//            Intent i = new Intent(this, Cells.class);
+//            i.putExtra("key", value);
+//            startActivity(i);
+
+    }
+
+
+    public void Setup(){
+
+
+
+
+        //initAdapters();
+        addListeners();
+
+
+    }
+
+    public void addListeners(){
+        //Add a ValueEventListener to the 'Cells' tree
+        //Count the children and store it in numCells (Amount of cells in the database)
+        //Keep count of the count to prevent the listener from triggering on accident -
+        // and thus adding cells twice to the list/spinner content
         table_cells.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -112,18 +195,15 @@ public class AddKist extends AppCompatActivity {
                         String snum = Long.toString(numCells);
                         list_selectcell.add(num);
                         if (num.equals(snum)) {
+                            //Update the spinner adapters with new content (cells)
                             initAdapters();
+                            //Looping through children is done. Set count to amount of children -
+                            // to jump out of the for loop
                             currentCount = numCells;
 
                         }
                     }
-
-
                 }
-
-                //initAdapters();
-
-
             }
 
             @Override
@@ -132,26 +212,24 @@ public class AddKist extends AppCompatActivity {
             }
         });
 
+        //Add a ValueEventListener to the 'Rassen' tree
         final DatabaseReference table_rassen = database.getReference("Rassen");
         table_rassen.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Clear the array before counting
                 list_ras.clear();
+                //Loop through the children
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    if(ds.getValue() != null){
-                        Ras ras = ds.getValue(Ras.class);
+                    if(ds.getValue() != null){ //Make sure that the received data is valid
+                        Ras ras = ds.getValue(Ras.class); //Put the received data into a ras class: Model -> ras
                         if(ras != null){
-                            list_ras.add(ras.getRas());
+                            list_ras.add(ras.getRas()); //Add the 'ras' to the list
                         }
-
-
                     }
-
-
-
                 }
 
-                initAdapters();
+                initAdapters(); //Update the spinner adapters with new content (rassen)
             }
 
             @Override
@@ -160,7 +238,12 @@ public class AddKist extends AppCompatActivity {
             }
         });
 
-        System.out.println(selectedCell);
+        //System.out.println(editAmount.getText().toString());
+        //!Hardcoded to 'Cell1' currently; needs to be dynamic!
+        //!Variable selectedCell is not available in the onCreate function!
+        //!initAdapters() is called from within the onCreate() but onCreate() -
+        //! finishes before actually calling initAdapters() so the variable isn't -
+        //! available yet. Normal behaviour but needs rethinking
         final DatabaseReference table_numkist = table_cells.child("Cell" + selectedCell);
         table_numkist.addValueEventListener(new ValueEventListener() {
             @Override
@@ -169,7 +252,7 @@ public class AddKist extends AppCompatActivity {
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     Kist kist = ds.getValue(Kist.class);
                     kisten.add(kist);
-                    System.out.println(kisten);
+                    System.out.println(kisten.size());
 
                 }
                 numKist = kisten.size();
@@ -181,17 +264,6 @@ public class AddKist extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
-
-
-        // Initialize button.
-        button = findViewById(R.id.btnAddKist);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addKist();
-            }
-
         });
 
         initAdapters();
@@ -279,62 +351,9 @@ public class AddKist extends AppCompatActivity {
 
             }
         });
-        //System.out.println(selectedCell);
+
     }
 
-        public void addKist () {
-        //kisten.clear();
-
-
-
-
-
-            // Set numKist to 0 before counting
-
-            //System.out.println(kisten.size());
-
-            // Get current date.
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date date = new Date();
-
-            Toast.makeText(this, selectedRas + selectedMaat + selectedKwaliteit + selectedCell, Toast.LENGTH_SHORT).show();
-            final String value = selectedRas + "," + selectedMaat + ","
-                    + selectedKwaliteit + "," + selectedCell;
-
-
-            String ref = "Cell" + selectedCell;
-            currentCel = ref;
-            editDate = findViewById(R.id.editDate);
-            String userDate = editDate.getText().toString();
-
-            if(userDate.equals("")){
-                useDate = date.toString();
-
-
-            }
-            else{
-                useDate = userDate;
-
-            }
-
-
-            Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
-            //final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference table_usercell = database.getReference();
-
-            String kistName = "Kist" + (numKist + 1);
-            String cellRef = "Cell" + selectedCell;
-            //System.out.println(selectedCell);
-
-
-            table_usercell.child("Cells").child(cellRef).child(kistName).setValue(kist);
-
-
-//            Intent i = new Intent(this, Cells.class);
-//            i.putExtra("key", value);
-//            startActivity(i);
-
-        }
 
 
 
