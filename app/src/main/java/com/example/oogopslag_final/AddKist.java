@@ -105,86 +105,8 @@ public class AddKist extends AppCompatActivity {
         list_kwaliteit.add("Matig");
         list_kwaliteit.add("Slecht");
         //Call the setup function
-        Setup();
-
-
-
-
-    }
-
-
-
-    public void addKist () {
-        //kisten.clear();
-        //System.out.println(selectedCell);
-        Setup();
-
-
-
-        // Set numKist to 0 before counting
-
-        //System.out.println(kisten.size());
-
-        // Get current date.
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-
-        Toast.makeText(this, selectedRas + selectedMaat + selectedKwaliteit + selectedCell, Toast.LENGTH_SHORT).show();
-        final String value = selectedRas + "," + selectedMaat + ","
-                + selectedKwaliteit + "," + selectedCell;
-
-
-        String ref = "Cell" + selectedCell;
-        currentCel = ref;
-        editDate = findViewById(R.id.editDate);
-        String userDate = editDate.getText().toString();
-
-        if(userDate.equals("")){
-            useDate = date.toString();
-
-
-        }
-        else{
-            useDate = userDate;
-
-        }
-
-
-        Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
-        //final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference table_usercell = database.getReference();
-
-        String kistName = "Kist" + (numKist + 1);
-        String cellRef = "Cell" + selectedCell;
-        //System.out.println(selectedCell);
-
-
-        table_usercell.child("Cells").child(cellRef).child(kistName).setValue(kist);
-
-
-//            Intent i = new Intent(this, Cells.class);
-//            i.putExtra("key", value);
-//            startActivity(i);
-
-    }
-
-
-    public void Setup(){
-
-
-
-
-        //initAdapters();
-        addListeners();
-
-
-    }
-
-    public void addListeners(){
-        //Add a ValueEventListener to the 'Cells' tree
-        //Count the children and store it in numCells (Amount of cells in the database)
-        //Keep count of the count to prevent the listener from triggering on accident -
-        // and thus adding cells twice to the list/spinner content
+//        Setup();
+        //Count cells
         table_cells.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -238,35 +160,111 @@ public class AddKist extends AppCompatActivity {
             }
         });
 
-        //System.out.println(editAmount.getText().toString());
-        //!Hardcoded to 'Cell1' currently; needs to be dynamic!
-        //!Variable selectedCell is not available in the onCreate function!
-        //!initAdapters() is called from within the onCreate() but onCreate() -
-        //! finishes before actually calling initAdapters() so the variable isn't -
-        //! available yet. Normal behaviour but needs rethinking
-        final DatabaseReference table_numkist = table_cells.child("Cell" + selectedCell);
-        table_numkist.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                kisten.clear();
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    Kist kist = ds.getValue(Kist.class);
-                    kisten.add(kist);
-                    System.out.println(kisten.size());
 
-                }
-                numKist = kisten.size();
-                initAdapters();
 
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+    }
 
-            }
-        });
 
-        initAdapters();
+
+    public void addKist () {
+        //kisten.clear();
+        //System.out.println(selectedCell);
+
+
+
+
+        // Set numKist to 0 before counting
+
+        //System.out.println(kisten.size());
+
+        // Get current date.
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+
+        Toast.makeText(this, selectedRas + selectedMaat + selectedKwaliteit + selectedCell, Toast.LENGTH_SHORT).show();
+        final String value = selectedRas + "," + selectedMaat + ","
+                + selectedKwaliteit + "," + selectedCell;
+
+
+        String ref = "Cell" + selectedCell;
+        currentCel = ref;
+        editDate = findViewById(R.id.editDate);
+        String userDate = editDate.getText().toString();
+
+        if(userDate.equals("")){
+            useDate = date.toString();
+
+
+        }
+        else{
+            useDate = userDate;
+
+        }
+
+
+        Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
+        //final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference table_usercell = database.getReference();
+
+        String kistName = "Kist" + (numKist + 1);
+        String cellRef = "Cell" + selectedCell;
+        //System.out.println(selectedCell);
+
+
+
+        String key = table_usercell.child("Cells").child(cellRef).push().getKey();
+        table_usercell.child("Cells").child(cellRef).child(key).setValue(kist);
+
+
+
+//            Intent i = new Intent(this, Cells.class);
+//            i.putExtra("key", value);
+//            startActivity(i);
+
+    }
+
+
+
+
+    public void addListeners(){
+        //Add a ValueEventListener to the 'Cells' tree
+        //Count the children and store it in numCells (Amount of cells in the database)
+        //Keep count of the count to prevent the listener from triggering on accident -
+        // and thus adding cells twice to the list/spinner content
+
+
+
+
+//        //System.out.println(editAmount.getText().toString());
+//        //!Hardcoded to 'Cell1' currently; needs to be dynamic!
+//        //!Variable selectedCell is not available in the onCreate function!
+//        //!initAdapters() is called from within the onCreate() but onCreate() -
+//        //! finishes before actually calling initAdapters() so the variable isn't -
+//        //! available yet. Normal behaviour but needs rethinking
+//        final DatabaseReference table_numkist = table_cells.child("Cell" + selectedCell);
+//        table_numkist.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                kisten.clear();
+//                for(DataSnapshot ds : dataSnapshot.getChildren()){
+//                    Kist kist = ds.getValue(Kist.class);
+//                    kisten.add(kist);
+//                    System.out.println(kisten.size());
+//
+//                }
+//                numKist = kisten.size();
+//                initAdapters();
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+
+        //initAdapters();
 
 
     }
