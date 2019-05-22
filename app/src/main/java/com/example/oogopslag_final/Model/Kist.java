@@ -8,6 +8,7 @@ public class Kist {
         maat = Maat;
         kwaliteit = Kwaliteit;
         cel = Cel;
+        datum = Datum;
 
         //lala
 

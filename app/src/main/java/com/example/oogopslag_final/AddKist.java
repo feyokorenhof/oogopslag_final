@@ -20,6 +20,7 @@ import java.util.Date;
 
 
 import com.example.oogopslag_final.Model.Kist;
+import com.example.oogopslag_final.Model.Ras;
 import com.example.oogopslag_final.Model.User;
 
 import java.lang.reflect.Array;
@@ -37,7 +38,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class AddKist extends AppCompatActivity {
 
+    //Get an instance of the Firebase database
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    //Get a reference to the 'Cells' tree, from the database
     final DatabaseReference table_cells = database.getReference("Cells");
 
     Spinner spinner_ras;
@@ -47,6 +50,7 @@ public class AddKist extends AppCompatActivity {
     private Button button;
 
     EditText editDate;
+    EditText editRow;
 
     String selectedRas;
     String selectedMaat;
@@ -59,9 +63,6 @@ public class AddKist extends AppCompatActivity {
     long currentCount;
 
     String currentCel;
-    String lastKist;
-
-    List<String> list_lastkist = new ArrayList<>();
 
 
 // Add spinner content.
@@ -75,9 +76,18 @@ public class AddKist extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Assign the proper layout to AddKist.java
         setContentView(R.layout.activity_addkist);
+        // Initialize button.
+        button = findViewById(R.id.btnAddKist);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        kisten.clear();
+                addKist();
+            }
+
+        });
 
         // Create spinners.
         spinner_ras = findViewById(R.id.spinner_ras);
@@ -85,22 +95,21 @@ public class AddKist extends AppCompatActivity {
         spinner_kwaliteit = findViewById(R.id.spinner_kwaliteit);
         spinner_selectcell = findViewById(R.id.spinner_selectcell);
 
+        //Row EditText
+        editRow = findViewById(R.id.editRow);
 
-        list_ras.add("Agria");
-        list_ras.add("Bintje");
+
+        //Add list content
+        //list_ras.add("Agria");
         list_maat.add("1");
         list_maat.add("2");
         list_kwaliteit.add("Perfect");
         list_kwaliteit.add("Goed");
         list_kwaliteit.add("Matig");
         list_kwaliteit.add("Slecht");
-
-
-
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference table_cells = database.getReference("Cells");
-
-
+        //Call the setup function
+//        Setup();
+        //Count cells
         table_cells.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -111,16 +120,41 @@ public class AddKist extends AppCompatActivity {
                         String snum = Long.toString(numCells);
                         list_selectcell.add(num);
                         if (num.equals(snum)) {
+                            //Update the spinner adapters with new content (cells)
                             initAdapters();
+                            //Looping through children is done. Set count to amount of children -
+                            // to jump out of the for loop
                             currentCount = numCells;
 
                         }
                     }
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+
+        //Add a ValueEventListener to the 'Rassen' tree
+        final DatabaseReference table_rassen = database.getReference("Rassen");
+        table_rassen.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Clear the array before counting
+                list_ras.clear();
+                //Loop through the children
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    if(ds.getValue() != null){ //Make sure that the received data is valid
+                        Ras ras = ds.getValue(Ras.class); //Put the received data into a ras class: Model -> ras
+                        if(ras != null){
+                            list_ras.add(ras.getRas()); //Add the 'ras' to the list
+                        }
+                    }
                 }
 
-
+                initAdapters(); //Update the spinner adapters with new content (rassen)
             }
 
             @Override
@@ -132,33 +166,114 @@ public class AddKist extends AppCompatActivity {
 
 
 
+    }
+
+
+
+    public void addKist () {
+        //kisten.clear();
+        //System.out.println(selectedCell);
 
 
 
 
-        // Initialize button.
-        button = findViewById(R.id.btnAddKist);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        // Set numKist to 0 before counting
+
+        //System.out.println(kisten.size());
+
+        // Get current date.
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+
+        Toast.makeText(this, selectedRas + selectedMaat + selectedKwaliteit + selectedCell, Toast.LENGTH_SHORT).show();
+        final String value = selectedRas + "," + selectedMaat + ","
+                + selectedKwaliteit + "," + selectedCell;
+
+
+        String ref = "Cell" + selectedCell;
+        currentCel = ref;
+        editDate = findViewById(R.id.editDate);
+        String userDate = editDate.getText().toString();
+
+        if(userDate.equals("")){
+            useDate = date.toString();
+
+
+        }
+        else{
+            useDate = userDate;
+
+        }
+
+
+        Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
+        //final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference table_usercell = database.getReference();
+
+        String kistName = "Kist" + (numKist + 1);
+        String cellRef = "Cell" + selectedCell;
+        //System.out.println(selectedCell);
 
 
 
-                addKist();
+        String key = table_usercell.child("Cells").child(cellRef).push().getKey();
+        String rowRef = "row" + editRow.getText().toString();
+        table_usercell.child("Cells").child(cellRef).child(rowRef).child(key).setValue(kist);
 
 
-            }
 
-        });
+//            Intent i = new Intent(this, Cells.class);
+//            i.putExtra("key", value);
+//            startActivity(i);
 
-        initAdapters();
+    }
+
+
+
+
+    public void addListeners(){
+        //Add a ValueEventListener to the 'Cells' tree
+        //Count the children and store it in numCells (Amount of cells in the database)
+        //Keep count of the count to prevent the listener from triggering on accident -
+        // and thus adding cells twice to the list/spinner content
+
+
+
+
+//        //System.out.println(editAmount.getText().toString());
+//        //!Hardcoded to 'Cell1' currently; needs to be dynamic!
+//        //!Variable selectedCell is not available in the onCreate function!
+//        //!initAdapters() is called from within the onCreate() but onCreate() -
+//        //! finishes before actually calling initAdapters() so the variable isn't -
+//        //! available yet. Normal behaviour but needs rethinking
+//        final DatabaseReference table_numkist = table_cells.child("Cell" + selectedCell);
+//        table_numkist.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                kisten.clear();
+//                for(DataSnapshot ds : dataSnapshot.getChildren()){
+//                    Kist kist = ds.getValue(Kist.class);
+//                    kisten.add(kist);
+//                    System.out.println(kisten.size());
+//
+//                }
+//                numKist = kisten.size();
+//                initAdapters();
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+
+        //initAdapters();
 
 
     }
 
     public void initAdapters() {
-
-
 
         // ArrayAdapter for spinner list_ras.
         ArrayAdapter<String> adapter_ras = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_ras);
@@ -238,86 +353,9 @@ public class AddKist extends AppCompatActivity {
 
             }
         });
-        //System.out.println(selectedCell);
+
     }
 
-        public void addKist () {
-            //kisten.clear();
-
-
-            final DatabaseReference table_numkist = table_cells.child("Cell1");
-            table_numkist.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot ds : dataSnapshot.getChildren()){
-                        Kist kist = ds.getValue(Kist.class);
-                        kisten.add(kist);
-                        //System.out.println(kist);
-
-                    }
-                    numKist = kisten.size();
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-
-            // Set numKist to 0 before counting
-
-            System.out.println(kisten.size());
-
-            // Get current date.
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date date = new Date();
-
-            Toast.makeText(this, selectedRas + selectedMaat + selectedKwaliteit + selectedCell, Toast.LENGTH_SHORT).show();
-            final String value = selectedRas + "," + selectedMaat + ","
-                    + selectedKwaliteit + "," + selectedCell;
-
-
-            String ref = "Cell" + selectedCell;
-            currentCel = ref;
-            editDate = findViewById(R.id.editDate);
-            String userDate = editDate.getText().toString();
-
-            if(userDate.equals("")){
-                useDate = date.toString();
-
-
-            }
-            else{
-                useDate = userDate;
-
-            }
-
-
-            Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
-            //final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference table_usercell = database.getReference();
-            String cellref = "Cell" + selectedCell;
-            System.out.print(kist);
-
-
-            //System.out.println(cellref);
-
-
-
-            //System.out.println(numKist);
-            //numKist = kisten.size();
-            String kistName = "Kist" + (numKist + 1);
-
-            table_usercell.child("Cells").child("Cell1").child(kistName).setValue(kist);
-
-
-//            Intent i = new Intent(this, Cells.class);
-//            i.putExtra("key", value);
-//            startActivity(i);
-
-        }
 
 
 

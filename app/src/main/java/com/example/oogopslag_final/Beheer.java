@@ -60,9 +60,11 @@ public class Beheer extends AppCompatActivity {
                 //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 //Date date = new Date();
                 String cellname = "Cell" + (numCells + 1);
+                Cell cell = new Cell(1,2,3,4,5,6);
 
-                System.out.println(cellname);
-                table_cells.child(cellname).setValue(cellname);
+
+                System.out.println(cell);
+                table_cells.child(cellname).setValue(cell);
                 finish();
 
 
