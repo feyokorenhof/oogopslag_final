@@ -162,7 +162,7 @@
         app:layout_constraintVertical_bias="0.49" />
 
     <EditText
-        android:id="@+id/editAmount"
+        android:id="@+id/editRow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -172,7 +172,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:ems="10"
-        android:hint="Vul hoeveelheid in"
+        android:hint="Vul rij in"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

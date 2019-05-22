@@ -50,7 +50,7 @@ public class AddKist extends AppCompatActivity {
     private Button button;
 
     EditText editDate;
-    EditText editAmount;
+    EditText editRow;
 
     String selectedRas;
     String selectedMaat;
@@ -94,6 +94,9 @@ public class AddKist extends AppCompatActivity {
         spinner_maat = findViewById(R.id.spinner_maat);
         spinner_kwaliteit = findViewById(R.id.spinner_kwaliteit);
         spinner_selectcell = findViewById(R.id.spinner_selectcell);
+
+        //Row EditText
+        editRow = findViewById(R.id.editRow);
 
 
         //Add list content
@@ -214,7 +217,8 @@ public class AddKist extends AppCompatActivity {
 
 
         String key = table_usercell.child("Cells").child(cellRef).push().getKey();
-        table_usercell.child("Cells").child(cellRef).child(key).setValue(kist);
+        String rowRef = "row" + editRow.getText().toString();
+        table_usercell.child("Cells").child(cellRef).child(rowRef).child(key).setValue(kist);
 
 
 

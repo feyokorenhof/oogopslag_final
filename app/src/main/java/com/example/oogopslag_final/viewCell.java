@@ -24,7 +24,7 @@ public class viewCell extends AppCompatActivity {
 
     ArrayList<Kist> kisten = new ArrayList<>();
     Button btn_viewCel;
-    EditText edit_viewCel;
+    EditText edit_viewCel, edit_viewRow;
     ListView lv;
     private KistAdapter kistAdapter;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -39,6 +39,7 @@ public class viewCell extends AppCompatActivity {
         setContentView(R.layout.activity_view_cel);
         btn_viewCel = findViewById(R.id.btnViewCel);
         edit_viewCel = findViewById(R.id.edtViewCel);
+        edit_viewRow = findViewById(R.id.edtViewRow);
         lv = findViewById(R.id.kistenView);
 
         btn_viewCel.setOnClickListener(new View.OnClickListener() {
@@ -54,31 +55,89 @@ public class viewCell extends AppCompatActivity {
 
     public void showCell(){
         kisten.clear();
-        final DatabaseReference table_cell = table_cells.child("Cell" + edit_viewCel.getText());
+        String cellRef = "Cell" + edit_viewCel.getText();
+        String rowRef = "row" + edit_viewRow.getText();
+        final DatabaseReference table_cellBird = table_cells.child(cellRef);
+        final DatabaseReference table_cellzoom = table_cells.child(cellRef).child(rowRef);
 
-        table_cell.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Kist kist = snapshot.getValue(Kist.class);
-                    kisten.add(kist);
-                    loadListView();
+        if(edit_viewRow.getText().toString().equals("")){
+            System.out.println("Bird");
+            table_cellBird.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                        System.out.println(snapshot.getValue());
+                        if(snapshot.getKey().contains("row")){
+                            for(DataSnapshot snapshotrow : snapshot.getChildren()){
+                                Kist kist = snapshotrow.getValue(Kist.class);
+                                kisten.add(kist);
+                                loadListView();
+                            }
+
+
+                        }
+                        else{
+                            Kist kist = snapshot.getValue(Kist.class);
+                            kisten.add(kist);
+                            loadListView();
+
+                        }
 
 
 
 
 
-                    //System.out.println(kist.getCel());
-                    //System.out.println(snapshot);
+
+
+
+                        //System.out.println(kist.getCel());
+                        //System.out.println(snapshot);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
-            }
+            });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+        }
+        else{
 
-            }
-        });
+            table_cellzoom.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Kist kist = snapshot.getValue(Kist.class);
+                        kisten.add(kist);
+                        loadListView();
+
+
+
+
+
+                        //System.out.println(kist.getCel());
+                        //System.out.println(snapshot);
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+
+        }
+
+
+
+
 
 
 
