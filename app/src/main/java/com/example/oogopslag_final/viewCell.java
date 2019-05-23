@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.oogopslag_final.Model.Kist;
 import com.google.firebase.database.DataSnapshot;
@@ -26,6 +27,7 @@ public class viewCell extends AppCompatActivity {
     Button btn_viewCel;
     EditText edit_viewCel, edit_viewRow;
     ListView lv;
+    TextView currentView;
     private KistAdapter kistAdapter;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference table_cells = database.getReference("Cells");
@@ -40,6 +42,7 @@ public class viewCell extends AppCompatActivity {
         btn_viewCel = findViewById(R.id.btnViewCel);
         edit_viewCel = findViewById(R.id.edtViewCel);
         edit_viewRow = findViewById(R.id.edtViewRow);
+        currentView = findViewById(R.id.txtView);
         lv = findViewById(R.id.kistenView);
 
         btn_viewCel.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +60,7 @@ public class viewCell extends AppCompatActivity {
         kisten.clear();
         String cellRef = "Cell" + edit_viewCel.getText();
         String rowRef = "row" + edit_viewRow.getText();
+        currentView.setText(cellRef + " " + rowRef);
         final DatabaseReference table_cellBird = table_cells.child(cellRef);
         final DatabaseReference table_cellzoom = table_cells.child(cellRef).child(rowRef);
 
