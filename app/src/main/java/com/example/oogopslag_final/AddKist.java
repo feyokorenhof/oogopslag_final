@@ -1,6 +1,7 @@
 package com.example.oogopslag_final;
 
 import android.content.Intent;
+import android.inputmethodservice.Keyboard;
 import android.net.wifi.aware.PublishConfig;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
@@ -47,6 +48,7 @@ public class AddKist extends AppCompatActivity {
     Spinner spinner_maat;
     Spinner spinner_kwaliteit;
     Spinner spinner_selectcell;
+    Spinner spinner_selectrow;
     private Button button;
 
     EditText editDate;
@@ -56,6 +58,7 @@ public class AddKist extends AppCompatActivity {
     String selectedMaat;
     String selectedKwaliteit;
     String selectedCell;
+    String selectedRow;
     String useDate;
 
     long numCells;
@@ -69,6 +72,7 @@ public class AddKist extends AppCompatActivity {
     List<String> list_maat = new ArrayList<>();
     List<String> list_kwaliteit = new ArrayList<>();
     List<String> list_selectcell = new ArrayList<>();
+    List<String> list_selectrow = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,13 +95,15 @@ public class AddKist extends AppCompatActivity {
         spinner_maat = findViewById(R.id.spinner_maat);
         spinner_kwaliteit = findViewById(R.id.spinner_kwaliteit);
         spinner_selectcell = findViewById(R.id.spinner_selectcell);
+        spinner_selectrow = findViewById(R.id.spinner_selectrow);
 
-        //Row EditText
-        editRow = findViewById(R.id.editRow);
 
 
         //Add list content
         //list_ras.add("Agria");
+        for(int i = 1; i < 7; i ++){
+            list_selectrow.add("Row" + Integer.toString(i));
+        }
         list_maat.add("1");
         list_maat.add("2");
         list_kwaliteit.add("Perfect");
@@ -107,7 +113,7 @@ public class AddKist extends AppCompatActivity {
         //Call the setup function
 //        Setup();
         //Count cells
-        table_cells.addValueEventListener(new ValueEventListener() {
+        table_cells.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 numCells = dataSnapshot.getChildrenCount();
@@ -165,46 +171,21 @@ public class AddKist extends AppCompatActivity {
 
 
     public void addKist () {
-        String edtRow = editRow.getText().toString();
-        if(!edtRow.isEmpty()){
-            // Get current date.
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date date = new Date();
-            //Toast.makeText(this, selectedRas + selectedMaat + selectedKwaliteit + selectedCell, Toast.LENGTH_SHORT).show();
-            String ref = "Cell" + selectedCell;
-            editDate = findViewById(R.id.editDate);
-            String userDate = editDate.getText().toString();
-
-            if(userDate.equals("")){
-                useDate = date.toString();
-
-
-            }
-            else{
-                useDate = userDate;
-
-            }
-
-            Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
-            final DatabaseReference table_usercell = database.getReference();
-
-            String kistName = "Kist" + (numKist + 1);
-            String cellRef = "Cell" + selectedCell;
-            //System.out.println(selectedCell);
-
-
-
-            String key = table_usercell.child("Cells").child(cellRef).push().getKey();
-            String rowRef = "row" + edtRow;
-            table_usercell.child("Cells").child(cellRef).child(rowRef).child(key).setValue(kist);
+        // Get current date.
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        //Toast.makeText(this, selectedRas + selectedMaat + selectedKwaliteit + selectedCell, Toast.LENGTH_SHORT).show();
+        useDate = date.toString();
+        Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
+        final DatabaseReference table_usercell = database.getReference();
+        String cellRef = "Cell" + selectedCell;
+        String key = table_usercell.child("Cells").child(cellRef).push().getKey();
+        String rowRef = selectedRow.toLowerCase();
+        table_usercell.child("Cells").child(cellRef).child(rowRef).child(key).setValue(kist);
 
 
         }
-        else{
-            Toast.makeText(this, "Vul een rij in!" , Toast.LENGTH_SHORT).show();
 
-        }
-    }
 
     public void initAdapters() {
 
@@ -277,6 +258,27 @@ public class AddKist extends AppCompatActivity {
                 String itemvalue = parent.getItemAtPosition(position).toString();
                 //Toast.makeText(AddKist.this, "Selected: " + itemvalue, Toast.LENGTH_SHORT).show();
                 selectedCell = itemvalue;
+                //System.out.println(selectedCell);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // ArrayAdapter for spinner list_selectrow.
+        ArrayAdapter<String> adapter_selectrow = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_selectrow);
+        adapter_selectrow.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_selectrow.setAdapter(adapter_selectrow);
+        spinner_selectrow.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                String itemvalue = parent.getItemAtPosition(position).toString();
+                //Toast.makeText(AddKist.this, "Selected: " + itemvalue, Toast.LENGTH_SHORT).show();
+                selectedRow = itemvalue;
                 //System.out.println(selectedCell);
 
             }
