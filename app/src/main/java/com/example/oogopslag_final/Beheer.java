@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Beheer extends AppCompatActivity {
 
@@ -56,7 +57,6 @@ public class Beheer extends AppCompatActivity {
             public void onClick(View v) {
                 String cellname = "Cell" + (numCells + 1);
                 Cell cell = new Cell(1,2,3,4,5,6);
-                System.out.println(cell);
                 table_cells.child(cellname).setValue(cell);
                 finish();
             }
