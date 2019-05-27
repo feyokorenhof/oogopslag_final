@@ -19,10 +19,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Beheer extends AppCompatActivity {
 
-    Button btn_AddCell, btn_JumpRas;
+    Button btn_AddCell, btn_JumpRas, btn_JumpRegister;
     long numCells;
 
     @Override
@@ -34,8 +35,9 @@ public class Beheer extends AppCompatActivity {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference table_cells = database.getReference("Cells");
 
-        btn_AddCell = (Button) findViewById(R.id.btnAddCell);
-        btn_JumpRas = (Button) findViewById(R.id.btnJumpRas);
+        btn_AddCell = findViewById(R.id.btnAddCell);
+        btn_JumpRas = findViewById(R.id.btnJumpRas);
+        btn_JumpRegister = findViewById(R.id.btnRegister);
 
         table_cells.addValueEventListener(new ValueEventListener() {
             @Override
@@ -53,24 +55,10 @@ public class Beheer extends AppCompatActivity {
         btn_AddCell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
-
-                //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                //Date date = new Date();
                 String cellname = "Cell" + (numCells + 1);
                 Cell cell = new Cell(1,2,3,4,5,6);
-
-
-                System.out.println(cell);
                 table_cells.child(cellname).setValue(cell);
                 finish();
-
-
-
-
-
             }
         });
 
@@ -78,6 +66,16 @@ public class Beheer extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 JumpToRas();
+            }
+        });
+
+        btn_JumpRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Beheer.this, Register.class);
+                startActivity(intent);
+                finish();
+
             }
         });
     }
