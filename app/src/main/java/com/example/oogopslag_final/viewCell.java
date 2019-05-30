@@ -1,20 +1,24 @@
 package com.example.oogopslag_final;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.oogopslag_final.Model.Kist;
 import com.github.mikephil.charting.charts.PieChart;
@@ -50,14 +54,15 @@ public class viewCell extends AppCompatActivity {
     ArrayList<PieEntry> yEntries = new ArrayList<>();
     ArrayList<String> xEntries = new ArrayList<>();
     PieChart pieChart;
-    int[] colors = {Color.BLUE, Color.MAGENTA, Color.GREEN, Color.CYAN, Color.RED, Color.YELLOW};
+    int[] colors = {Color.BLUE, Color.MAGENTA, Color.GREEN, Color.CYAN, Color.RED, Color.YELLOW, Color.GRAY, Color.BLACK, Color.WHITE, Color.DKGRAY};
 
-    Button btn_viewCel;
+    Button btn_viewCel, btn_hideQuery;
     EditText edit_viewCel, edit_viewRow;
     ListView lv;
     TextView currentView;
     private View chart;
     int count;
+    int currentCel = 0;
     private KistAdapter kistAdapter;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference table_cells = database.getReference("Cells");
@@ -65,26 +70,61 @@ public class viewCell extends AppCompatActivity {
 
 
 
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_cel);
         btn_viewCel = findViewById(R.id.btnViewCel);
+        btn_hideQuery = findViewById(R.id.btn_hide);
+        btn_hideQuery.setVisibility(View.GONE);
         edit_viewCel = findViewById(R.id.edtViewCel);
         edit_viewRow = findViewById(R.id.edtViewRow);
         currentView = findViewById(R.id.txtView);
         lv = findViewById(R.id.kistenView);
         pieChart = findViewById(R.id.piechart);
         pieChart.getDescription().setText("Verdeling Rassen");
+        pieChart.setNoDataText("Kies een cel of swipe naar beneden!");
+        pieChart.setNoDataTextColor(Color.BLACK);
+        pieChart.setNoDataTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         pieChart.setRotationEnabled(true);
         pieChart.setHoleRadius(25f);
         pieChart.setCenterText("Verdeling rassen");
         pieChart.setCenterTextSize(10);
         pieChart.setDrawEntryLabels(true);
         Legend legend = pieChart.getLegend();
-        legend.setTextSize(20);
+        legend.setTextSize(14);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        pieChart.setOnTouchListener(new swipeListener(viewCell.this){
+            public void onSwipeTop() {
+                Toast.makeText(viewCell.this, "top", Toast.LENGTH_SHORT).show();
+                String txtCell = edit_viewCel.getText().toString();
+                int cellnum = currentCel - 1;
+                showCell(cellnum);
+
+            }
+            public void onSwipeRight() {
+                Toast.makeText(viewCell.this, "right", Toast.LENGTH_SHORT).show();
+
+            }
+            public void onSwipeLeft() {
+                Toast.makeText(viewCell.this, "left", Toast.LENGTH_SHORT).show();
+
+
+            }
+            public void onSwipeBottom() {
+                Toast.makeText(viewCell.this, "bottom", Toast.LENGTH_SHORT).show();
+                String txtCell = edit_viewCel.getText().toString();
+                int cellnum = currentCel + 1;
+                showCell(cellnum);
+
+            }
+
+        });
+
+
 
 
 
@@ -112,27 +152,44 @@ public class viewCell extends AppCompatActivity {
         btn_viewCel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String cref = edit_viewCel.getText().toString();
+                int cellnum = Integer.parseInt(cref);
+                showCell(cellnum);
+            }
+        });
 
-                showCell();
+        btn_hideQuery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btn_viewCel.setVisibility(View.VISIBLE);
+                edit_viewCel.setVisibility(View.VISIBLE);
+                edit_viewRow.setVisibility(View.VISIBLE);
+                btn_hideQuery.setVisibility(View.GONE);
+
             }
         });
 
 
     }
 
-    public void showCell(){
+    public void showCell(int cref){
         kisten.clear();
         rassen.clear();
         yEntries.clear();
         xEntries.clear();
-        String cellRef = "Cell" + edit_viewCel.getText();
+        String cellRef = "Cell" + cref;
         String rowRef = "row" + edit_viewRow.getText();
+        currentCel = cref;
         currentView.setText(cellRef + " " + rowRef);
         final DatabaseReference table_cellBird = table_cells.child(cellRef);
         final DatabaseReference table_cellzoom = table_cells.child(cellRef).child(rowRef);
 
         if(edit_viewRow.getText().toString().equals("")){
             lv.setVisibility(View.GONE);
+            btn_hideQuery.setVisibility(View.VISIBLE);
+            btn_viewCel.setVisibility(View.GONE);
+            edit_viewCel.setVisibility(View.GONE);
+            edit_viewRow.setVisibility(View.GONE);
             pieChart.setVisibility(View.VISIBLE);
             System.out.println("Bird");
             table_cellBird.addValueEventListener(new ValueEventListener() {
@@ -281,6 +338,7 @@ public class viewCell extends AppCompatActivity {
         pieDataSet.setSliceSpace(2);
         pieDataSet.setValueTextSize(20);
         pieDataSet.setColors(colors);
+
 
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);

@@ -19,7 +19,7 @@ import java.util.List;
 
 public class KistAdapter extends ArrayAdapter<Kist>{
 
-    private Context mContext;
+       private Context mContext;
     private List<Kist> kistList = new ArrayList<>();
 
     public KistAdapter(@NonNull Context context, ArrayList<Kist> list) {
