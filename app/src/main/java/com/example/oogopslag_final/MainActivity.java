@@ -1,5 +1,6 @@
 package com.example.oogopslag_final;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Handler;
@@ -16,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static int SPLASH_TIME_OUT = 4000;
-    private ProgressBar pgrbar;
+    private ProgressBar progress;
 
 
 
@@ -25,10 +26,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ImageView SPLASH_IMG = (ImageView) findViewById(R.id.SPLASH_IMG);
-        pgrbar = findViewById(R.id.load_bar);
-        pgrbar.setVisibility(View.VISIBLE);
-        //int imageResource = getResources().getIdentifier("@drawable/oogopslag.png", null, this.getPackageName());
         SPLASH_IMG.setImageResource(R.drawable.oogopslag);
+        progress = findViewById(R.id.load_bar);
+        progress.setIndeterminate(true);
+        final int totalProgressTime = 100;
+        final Thread t = new Thread(){
+
+            @Override
+            public void run(){
+
+                int jumpTime = 0;
+                while(jumpTime < totalProgressTime){
+                    try {
+                        sleep(200);
+                        jumpTime += 5;
+                        progress.setProgress(jumpTime);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+        };
+        t.start();
+
+
+
+
+
 
 
         new Handler().postDelayed(new Runnable() {
