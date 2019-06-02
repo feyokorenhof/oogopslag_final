@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ViewUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.TextView;
@@ -56,15 +57,16 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, "Gefeliciteerd " + LoggedInUser + "!", Toast.LENGTH_SHORT).show();
             txtView.setText("Fijne verjaardag!");
             hasBday = true;
-            new ParticleSystem(HomeActivity.this, 800, R.drawable.confeti2, 10000)
-                    .setSpeedRange(0.08f, 0.5f)
+            new ParticleSystem(HomeActivity.this, 800, R.drawable.confeti2, 20000)
+                    .setSpeedRange(0.01f, 0.5f)
+                    .setAcceleration(0.00005f, 90)
+                    .setRotationSpeedRange(-15f, 15f)
                     .oneShot(findViewById(R.id.txtHi), 800);
-            new ParticleSystem(HomeActivity.this, 800, R.drawable.confeti3, 10000)
-                    .setSpeedRange(0.08f, 0.5f)
+            new ParticleSystem(HomeActivity.this, 800, R.drawable.confeti3, 20000)
+                    .setSpeedRange(0.01f, 0.5f)
+                    .setAcceleration(0.00005f, 90)
+                    .setRotationSpeedRange(-15f, 15f)
                     .oneShot(findViewById(R.id.txtHi), 800);
-
-
-
 
         }
         else{
@@ -81,12 +83,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(hasBday){
-                    new ParticleSystem(HomeActivity.this, 80, R.drawable.confeti2, 1000)
-                            .setSpeedRange(0.2f, 0.5f)
-                            .oneShot(findViewById(R.id.btn_addkist), 80);
-                    new ParticleSystem(HomeActivity.this, 80, R.drawable.confeti3, 1000)
-                            .setSpeedRange(0.2f, 0.5f)
-                            .oneShot(findViewById(R.id.btn_addkist), 80);
+                    happyBirthday(btnAddKist);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -108,12 +105,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(hasBday){
-                    new ParticleSystem(HomeActivity.this, 80, R.drawable.confeti2, 1000)
-                            .setSpeedRange(0.2f, 0.5f)
-                            .oneShot(findViewById(R.id.btn_beheer), 80);
-                    new ParticleSystem(HomeActivity.this, 80, R.drawable.confeti3, 1000)
-                            .setSpeedRange(0.2f, 0.5f)
-                            .oneShot(findViewById(R.id.btn_beheer), 80);
+                    happyBirthday(btnBeheer);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -161,12 +153,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(hasBday){
-                    new ParticleSystem(HomeActivity.this, 80, R.drawable.confeti2, 1000)
-                            .setSpeedRange(0.2f, 0.5f)
-                            .oneShot(findViewById(R.id.btn_viewcell), 80);
-                    new ParticleSystem(HomeActivity.this, 80, R.drawable.confeti3, 1000)
-                            .setSpeedRange(0.2f, 0.5f)
-                            .oneShot(findViewById(R.id.btn_viewcell), 80);
+                    happyBirthday(btnViewCell);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -200,6 +187,20 @@ public class HomeActivity extends AppCompatActivity {
     public void openViewCell(){
         Intent intent = new Intent(this, viewCell.class);
         startActivity(intent);
+
+    }
+
+    public void happyBirthday(View view){
+        View target = view;
+        new ParticleSystem(HomeActivity.this, 80, R.drawable.confeti2, 1000)
+                .setSpeedRange(0.2f, 0.5f)
+                .setAcceleration(0.00005f, 90)
+                .setRotationSpeedRange(-15f, 15f)
+                .oneShot(target, 80);
+        new ParticleSystem(HomeActivity.this, 80, R.drawable.confeti3, 1000)
+                .setSpeedRange(0.2f, 0.5f)
+                .oneShot(target, 80);
+
 
     }
 

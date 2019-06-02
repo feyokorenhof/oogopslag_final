@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/aquamarine"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
     <TextView
@@ -19,7 +19,7 @@
         android:layout_marginBottom="8dp"
         android:text="In een oogopslag"
         android:textAlignment="center"
-        android:textColor="#237727"
+        android:textColor="@color/colorAccent"
         android:textSize="60sp"
         android:textStyle="bold"
         app:fontFamily="monospace"
@@ -39,13 +39,14 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@color/background"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.49"
-        app:srcCompat="@color/aquamarine"
+        app:srcCompat="@drawable/oogopslag"
         tools:visibility="visible" />
 
     <ProgressBar

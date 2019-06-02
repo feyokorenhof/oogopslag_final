@@ -1,5 +1,6 @@
 package com.example.oogopslag_final;
 
+import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +26,8 @@ public class Login_SignUp extends AppCompatActivity {
 
 
 
+
+
     }
 
     public void login(){
@@ -33,5 +36,7 @@ public class Login_SignUp extends AppCompatActivity {
         //finish();
 
     }
+
+
 
 }

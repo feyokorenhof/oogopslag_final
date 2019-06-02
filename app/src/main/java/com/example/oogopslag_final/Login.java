@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.example.oogopslag_final.Common.*;
 
 import com.example.oogopslag_final.Common.Common;
 import com.example.oogopslag_final.Model.User;
@@ -30,9 +31,16 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
+
+
         edtUser = findViewById(R.id.edit_user);
         edtPassword = findViewById(R.id.edit_password);
         btnLogin = findViewById(R.id.btnLogin);
+
+        if(Common.currentUser != null){
+            edtUser.setText(Common.currentUser.getName());
+            edtPassword.setText(Common.currentUser.getPassword());
+        }
 
         // Init Firebase
 

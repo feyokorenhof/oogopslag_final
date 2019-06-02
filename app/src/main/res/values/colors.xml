@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="red">#ffff0000</color>
     <color name="aquamarine">#7FFFD4</color>
+    <color name="background">#3F4A5B</color>
 </resources>
