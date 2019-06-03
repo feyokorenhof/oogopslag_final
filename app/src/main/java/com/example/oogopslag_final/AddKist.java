@@ -190,8 +190,8 @@ public class AddKist extends AppCompatActivity {
     public void initAdapters() {
 
         // ArrayAdapter for spinner list_ras.
-        ArrayAdapter<String> adapter_ras = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_ras);
-        adapter_ras.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter_ras = new ArrayAdapter<String>(this, R.layout.my_spinner, list_ras);
+        //adapter_ras.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_ras.setAdapter(adapter_ras);
         spinner_ras.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -210,8 +210,8 @@ public class AddKist extends AppCompatActivity {
         });
 
         // ArrayAdapter for spinner list_maat.
-        ArrayAdapter<String> adapter_maat = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_maat);
-        adapter_maat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter_maat = new ArrayAdapter<String>(this, R.layout.my_spinner, list_maat);
+        //adapter_maat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_maat.setAdapter(adapter_maat);
         spinner_maat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -229,8 +229,8 @@ public class AddKist extends AppCompatActivity {
         });
 
         // ArrayAdapter for spinner list_kwaliteit.
-        ArrayAdapter<String> adapter_kwaliteit = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_kwaliteit);
-        adapter_kwaliteit.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter_kwaliteit = new ArrayAdapter<String>(this, R.layout.my_spinner, list_kwaliteit);
+        //adapter_kwaliteit.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_kwaliteit.setAdapter(adapter_kwaliteit);
         spinner_kwaliteit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -248,8 +248,8 @@ public class AddKist extends AppCompatActivity {
         });
 
         // ArrayAdapter for spinner list_selectcell.
-        ArrayAdapter<String> adapter_selectcell = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_selectcell);
-        adapter_selectcell.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter_selectcell = new ArrayAdapter<String>(this, R.layout.my_spinner, list_selectcell);
+        //adapter_selectcell.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_selectcell.setAdapter(adapter_selectcell);
         spinner_selectcell.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -269,8 +269,8 @@ public class AddKist extends AppCompatActivity {
         });
 
         // ArrayAdapter for spinner list_selectrow.
-        ArrayAdapter<String> adapter_selectrow = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_selectrow);
-        adapter_selectrow.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter_selectrow = new ArrayAdapter<String>(this, R.layout.my_spinner, list_selectrow);
+        //adapter_selectrow.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_selectrow.setAdapter(adapter_selectrow);
         spinner_selectrow.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

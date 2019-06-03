@@ -57,16 +57,16 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, "Gefeliciteerd " + LoggedInUser + "!", Toast.LENGTH_SHORT).show();
             txtView.setText("Fijne verjaardag!");
             hasBday = true;
-            new ParticleSystem(HomeActivity.this, 800, R.drawable.confeti2, 20000)
+            new ParticleSystem(HomeActivity.this, 400, R.drawable.confeti2, 20000)
                     .setSpeedRange(0.01f, 0.5f)
                     .setAcceleration(0.00005f, 90)
                     .setRotationSpeedRange(-15f, 15f)
-                    .oneShot(findViewById(R.id.txtHi), 800);
-            new ParticleSystem(HomeActivity.this, 800, R.drawable.confeti3, 20000)
+                    .oneShot(findViewById(R.id.txtHi), 400);
+            new ParticleSystem(HomeActivity.this, 400, R.drawable.confeti3, 20000)
                     .setSpeedRange(0.01f, 0.5f)
                     .setAcceleration(0.00005f, 90)
                     .setRotationSpeedRange(-15f, 15f)
-                    .oneShot(findViewById(R.id.txtHi), 800);
+                    .oneShot(findViewById(R.id.txtHi), 400);
 
         }
         else{

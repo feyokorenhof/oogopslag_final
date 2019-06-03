@@ -288,8 +288,8 @@ public class Register extends AppCompatActivity {
 
     public void initAdapters(){
         // ArrayAdapter for spinner list_users.
-        ArrayAdapter<String> adapter_users = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list_users);
-        adapter_users.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter_users = new ArrayAdapter<String>(this, R.layout.my_spinner, list_users);
+        //adapter_users.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_users.setAdapter(adapter_users);
         spinner_users.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
