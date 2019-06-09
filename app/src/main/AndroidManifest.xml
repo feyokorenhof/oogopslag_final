@@ -14,6 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".celBeheer"></activity>
         <activity android:name=".viewCell" />
         <activity android:name=".AddRas" />
         <activity android:name=".Beheer" />

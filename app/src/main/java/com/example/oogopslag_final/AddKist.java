@@ -44,11 +44,7 @@ public class AddKist extends AppCompatActivity {
     //Get a reference to the 'Cells' tree, from the database
     final DatabaseReference table_cells = database.getReference("Cells");
 
-    Spinner spinner_ras;
-    Spinner spinner_maat;
-    Spinner spinner_kwaliteit;
-    Spinner spinner_selectcell;
-    Spinner spinner_selectrow;
+    Spinner spinner_ras, spinner_maat, spinner_kwaliteit, spinner_selectcell, spinner_selectrow, spinner_selectcol, spinner_selectplaats;
     private Button button;
 
     EditText editDate;
@@ -59,6 +55,8 @@ public class AddKist extends AppCompatActivity {
     String selectedKwaliteit;
     String selectedCell;
     String selectedRow;
+    String selectedCol;
+    String selectedPlaats;
     String useDate;
 
     long numCells;
@@ -73,6 +71,8 @@ public class AddKist extends AppCompatActivity {
     List<String> list_kwaliteit = new ArrayList<>();
     List<String> list_selectcell = new ArrayList<>();
     List<String> list_selectrow = new ArrayList<>();
+    List<String> list_selectcol = new ArrayList<>();
+    List<String> list_selectplaats = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,22 +96,30 @@ public class AddKist extends AppCompatActivity {
         spinner_kwaliteit = findViewById(R.id.spinner_kwaliteit);
         spinner_selectcell = findViewById(R.id.spinner_selectcell);
         spinner_selectrow = findViewById(R.id.spinner_selectrow);
+        spinner_selectcol = findViewById(R.id.spinner_selectcol);
+        spinner_selectplaats = findViewById(R.id.spinner_selectplaats);
 
 
 
         //Add list content
-        //list_ras.add("Agria");
-        for(int i = 1; i < 7; i ++){
+        for(int i = 1; i < 12; i ++){
             list_selectrow.add("Row" + Integer.toString(i));
         }
+
+        for(int i = 1; i < 12; i ++){
+            list_selectcol.add("Col" + Integer.toString(i));
+        }
+        for(int i = 1; i < 5; i ++){
+            list_selectplaats.add("Plaats" + Integer.toString(i));
+        }
+
         list_maat.add("1");
         list_maat.add("2");
         list_kwaliteit.add("Perfect");
         list_kwaliteit.add("Goed");
         list_kwaliteit.add("Matig");
         list_kwaliteit.add("Slecht");
-        //Call the setup function
-//        Setup();
+
         //Count cells
         table_cells.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -176,12 +184,12 @@ public class AddKist extends AppCompatActivity {
         Date date = new Date();
         //Toast.makeText(this, selectedRas + selectedMaat + selectedKwaliteit + selectedCell, Toast.LENGTH_SHORT).show();
         useDate = date.toString();
-        Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, useDate);
+        Kist kist = new Kist(selectedRas, selectedMaat, selectedKwaliteit, selectedCell, selectedRow, selectedCol, selectedPlaats, useDate);
         final DatabaseReference table_usercell = database.getReference();
         String cellRef = "Cell" + selectedCell;
         String key = table_usercell.child("Cells").child(cellRef).push().getKey();
         String rowRef = selectedRow.toLowerCase();
-        table_usercell.child("Cells").child(cellRef).child(rowRef).child(key).setValue(kist);
+        table_usercell.child("Cells").child(cellRef).child(key).setValue(kist);
 
 
         }
@@ -281,6 +289,40 @@ public class AddKist extends AppCompatActivity {
                 selectedRow = itemvalue;
                 //System.out.println(selectedCell);
 
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // ArrayAdapter for spinner list_selectcol.
+        ArrayAdapter<String> adapter_selectcol = new ArrayAdapter<String>(this, R.layout.my_spinner, list_selectcol);
+        //adapter_selectcol.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_selectcol.setAdapter(adapter_selectcol);
+        spinner_selectcol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String itemvalue = parent.getItemAtPosition(position).toString();
+                selectedCol = itemvalue;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // ArrayAdapter for spinner list_selectplaats.
+        ArrayAdapter<String> adapter_selectplaats = new ArrayAdapter<String>(this, R.layout.my_spinner, list_selectplaats);
+        //adapter_selectplaats.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_selectplaats.setAdapter(adapter_selectplaats);
+        spinner_selectplaats.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String itemvalue = parent.getItemAtPosition(position).toString();
+                selectedPlaats = itemvalue;
             }
 
             @Override
